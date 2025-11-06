@@ -13,36 +13,32 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
         public override void BuildFooter()
         {
             ClearFooter();
-            if ((bool)TryGetProperty("TriggerOnStart"))
-            {
-                Footer = "Triggers on start";
-            }
 
             if ((bool)TryGetProperty("TriggerOnPropertyChange"))
             {
-                if (Footer != null)
-                {
-                    Footer += ", ";
-                }
+                if (Footer == null)
+                    Footer = "Triggers on property change";
                 else
-                {
-                    Footer = "Triggers ";
-                }
-
-                Footer += "On property changed";
+                    Footer += "\nTriggers on property change";
             }
-            
-            if (TryGetProperty("AlwaysSend") != null && (bool)TryGetProperty("AlwaysSend"))
+
+            if ((bool)TryGetProperty("TriggerOnStart"))
             {
-                if (Footer != null)
-                {
-                    Footer += "\n";
-                }
-
-                Footer += "Always sends outputs";
+                if (Footer == null)
+                    Footer = "Triggers on start";
+                else
+                    Footer += "\nTriggers on start";
             }
             
-            if (TryGetProperty("AlwaysSendOnEvent") != null && (bool)TryGetProperty("AlwaysSendOnEvent"))
+            if ((bool)TryGetProperty("AlwaysSend"))
+            {
+                if (Footer == null)
+                    Footer = "Always sends outputs";
+                else
+                    Footer += "\nAlways sends outputs";
+            }
+            
+            /*if (TryGetProperty("AlwaysSendOnEvent") != null && (bool)TryGetProperty("AlwaysSendOnEvent"))
             {
                 if (Footer != null)
                 {
@@ -50,7 +46,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                 }
 
                 Footer += "Always sends when In is triggered";
-            }
+            }*/
         }
 
         public CompareBoolNode()
