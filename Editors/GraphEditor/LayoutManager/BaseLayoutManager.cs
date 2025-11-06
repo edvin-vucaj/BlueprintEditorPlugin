@@ -36,11 +36,33 @@ namespace BlueprintEditorPlugin.Editors.GraphEditor.LayoutManager
                 });
                 
                 //Get the name of the project(make sure to remove .fbproject)
-                string projectName = frosty.Project.DisplayName.Split('.')[0];
+                // Stripped the last 10 characters from the project name (to remove ".fbproject")
+                string projectName = frosty.Project.DisplayName.Substring(0, frosty.Project.DisplayName.Length - 10);
                 return $@"{AppDomain.CurrentDomain.BaseDirectory}BlueprintEditor\BlueprintLayouts\{ProfilesLibrary.ProfileName}\{projectName}\";
             }
         }
 
+        // Added another layout path to save alongside the default one
+        // This is used as a backup folder path for the layouts because if there are too many layouts saved in
+        // the default "BlueprintEditor" folder, game crashes may randomly occur after applying mods
+        // Hence deleting the "BlueprintEditor" folder and restoring layouts from this custom folder solves the issue (temporarily)
+        public static string CustomLayoutPath {
+            get {
+                //Get the MainWindow so we can grab the Project File
+                MainWindow frosty = null;
+
+                //Do this to ensure task windows work correctly
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    frosty = Application.Current.MainWindow as MainWindow;
+                });
+
+                //Get the name of the project(make sure to remove .fbproject)
+                // Stripped the last 10 characters from the project name (to remove ".fbproject")
+                string projectName = frosty.Project.DisplayName.Substring(0, frosty.Project.DisplayName.Length - 10);
+                return $@"{AppDomain.CurrentDomain.BaseDirectory}BPE Layouts\BlueprintLayouts\{ProfilesLibrary.ProfileName}\{projectName}\";
+            }
+        }
         public virtual bool IsValid()
         {
             return true;

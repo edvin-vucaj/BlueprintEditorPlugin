@@ -70,9 +70,15 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.LayoutManager
         public override bool SaveLayout(string path)
         {
             FileInfo fileInfo = new FileInfo($@"{CurrentLayoutPath}\{path.Replace("/", "\\")}");
+            FileInfo customFileInfo = new FileInfo($@"{CustomLayoutPath}\{path.Replace("/", "\\")}");
+
             if (!fileInfo.Directory.Exists)
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
+            if (!customFileInfo.Directory.Exists)
+            {
+                Directory.CreateDirectory(customFileInfo.DirectoryName);
             }
 
             try
@@ -80,7 +86,9 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.LayoutManager
                 LayoutWriter layoutWriter =
                     new LayoutWriter(new FileStream($@"{CurrentLayoutPath}\{path.Replace("/", "\\")}",
                         FileMode.Create));
+                LayoutWriter CustomLayoutWriter = new LayoutWriter(new FileStream($@"{CustomLayoutPath}\{path.Replace("/", "\\")}", FileMode.Create));
                 layoutWriter.Write(Version);
+                CustomLayoutWriter.Write(Version);
 
                 List<IVertex> verts = new List<IVertex>();
                 List<ITransient> transients = new List<ITransient>();
@@ -98,57 +106,106 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.LayoutManager
                 }
 
                 layoutWriter.Write(verts.Count);
+                CustomLayoutWriter.Write(verts.Count);
 
                 foreach (IVertex vertex in verts)
                 {
                     if (vertex is EntityNode node)
                     {
                         layoutWriter.Write(true);
+                        CustomLayoutWriter.Write(true);
+
                         layoutWriter.Write((int)node.Type);
+                        CustomLayoutWriter.Write((int)node.Type);
+
                         layoutWriter.Write(node.FileGuid);
+                        CustomLayoutWriter.Write(node.FileGuid);
+
                         layoutWriter.Write(node.InternalGuid);
+                        CustomLayoutWriter.Write(node.InternalGuid);
+
                         layoutWriter.Write(vertex.Location);
+                        CustomLayoutWriter.Write(vertex.Location);
+
                         layoutWriter.Write(vertex.Size.Width);
+                        CustomLayoutWriter.Write(vertex.Size.Width);
+
                         layoutWriter.Write(vertex.Size.Height);
+                        CustomLayoutWriter.Write(vertex.Size.Height);
 
                         layoutWriter.Write(node.Inputs.Count);
+                        CustomLayoutWriter.Write(node.Inputs.Count);
+
                         foreach (IPort input in node.Inputs)
                         {
                             layoutWriter.WriteNullTerminatedString(input.Name);
+                            CustomLayoutWriter.WriteNullTerminatedString(input.Name);
+
                             layoutWriter.Write((int)((EntityPort)input).Type);
+                            CustomLayoutWriter.Write((int)((EntityPort)input).Type);
+
                             layoutWriter.Write((int)((EntityPort)input).Realm);
+                            CustomLayoutWriter.Write((int)((EntityPort)input).Realm);
+
                             layoutWriter.Write(((EntityPort)input).HasPlayer);
+                            CustomLayoutWriter.Write(((EntityPort)input).HasPlayer);
+
                             layoutWriter.Write(((EntityPort)input).IsInterface);
+                            CustomLayoutWriter.Write(((EntityPort)input).IsInterface);
                         }
 
                         layoutWriter.Write(node.Outputs.Count);
+                        CustomLayoutWriter.Write(node.Outputs.Count);
+
                         foreach (IPort output in node.Outputs)
                         {
                             layoutWriter.WriteNullTerminatedString(output.Name);
+                            CustomLayoutWriter.WriteNullTerminatedString(output.Name);
+
                             layoutWriter.Write((int)((EntityPort)output).Type);
+                            CustomLayoutWriter.Write((int)((EntityPort)output).Type);
+
                             layoutWriter.Write((int)((EntityPort)output).Realm);
+                            CustomLayoutWriter.Write((int)((EntityPort)output).Realm);
+
                             layoutWriter.Write(((EntityPort)output).HasPlayer);
+                            CustomLayoutWriter.Write(((EntityPort)output).HasPlayer);
+
                             layoutWriter.Write(((EntityPort)output).IsInterface);
+                            CustomLayoutWriter.Write(((EntityPort)output).IsInterface);
                         }
                     }
                     else
                     {
                         layoutWriter.Write(false);
+                        CustomLayoutWriter.Write(false);
+
                         layoutWriter.Write(NodeWrangler.Vertices.IndexOf(vertex));
+                        CustomLayoutWriter.Write(NodeWrangler.Vertices.IndexOf(vertex));
+
                         layoutWriter.Write(vertex.Location);
+                        CustomLayoutWriter.Write(vertex.Location);
+
                         layoutWriter.Write(vertex.Size.Width);
+                        CustomLayoutWriter.Write(vertex.Size.Width);
+
                         layoutWriter.Write(vertex.Size.Height);
+                        CustomLayoutWriter.Write(vertex.Size.Height);
                     }
                 }
                 
                 layoutWriter.Write(transients.Count);
-                
+                CustomLayoutWriter.Write(transients.Count);
+
                 foreach (ITransient transient in transients)
                 {
                     try
                     {
                         layoutWriter.WriteNullTerminatedString(transient.GetType().Name);
+                        CustomLayoutWriter.WriteNullTerminatedString(transient.GetType().Name);
+
                         transient.Save(layoutWriter);
+                        transient.Save(CustomLayoutWriter);
                     }
                     catch (Exception e)
                     {
@@ -160,6 +217,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.LayoutManager
                 }
 
                 layoutWriter.Dispose();
+                CustomLayoutWriter.Dispose();
             }
             catch (IOException)
             {
