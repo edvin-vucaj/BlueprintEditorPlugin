@@ -11,7 +11,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
 	public class EventAndGateNode : EntityNode
 	{
 		public override string ObjectType => "EventAndGateEntityData";
-        public override string ToolTip => "This node only fires an event when all In events have triggered";
+        public override string ToolTip => "This node only fires an event when all input events have triggered";
 
         public override void OnCreation()
 		{
@@ -39,12 +39,6 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                 uint oldCount = (uint)args.OldValue;
                 uint inCount = (uint)TryGetProperty("EventCount");
 
-                if (inCount == 0)
-                {
-                    ClearInputs();
-                    return;
-                }
-                
                 if (oldCount < inCount)
                 {
                     // Add new inputs
@@ -53,14 +47,14 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                         if (GetInput($"In{i + 1}", ConnectionType.Event) != null)
                             continue;
                         
-                        AddInput($"In{i + 1}", ConnectionType.Event, Realm);
+                        AddInput($"In{i}", ConnectionType.Event, Realm);
                     }
                 }
                 else
                 {
-                    for (uint i = oldCount; i > 1; i--)
+                    for (uint i = oldCount; i > inCount; i--)
                     {
-                        RemoveInput($"In{i + 1}", ConnectionType.Event);
+                        RemoveInput($"In{i}", ConnectionType.Event);
                     }
                 }
             }
