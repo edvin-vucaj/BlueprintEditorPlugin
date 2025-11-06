@@ -9,7 +9,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
     public class EventSwitchNode : EntityNode
     {
         public override string ObjectType => "EventSwitchEntityData";
-        public override string ToolTip => "A switch which changes what event it outputs depending on the current OutEvent";
+        public override string ToolTip => "A switch which changes what event it outputs depending on the current Out event";
 
         public override void OnCreation()
         {
@@ -41,24 +41,29 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                 if (oldCount < outCount)
                 {
                     // Add new inputs
-                    for (uint i = 1; i <= outCount; i++)
-                    {
-                        if (GetOutput($"Out{i}", ConnectionType.Property) != null)
-                            continue;
-                        
+                    for (uint i = 0; i < outCount; i++)
+                    {   
                         AddOutput($"Out{i}", ConnectionType.Event, Realm);
                     }
                 }
                 else
                 {
-                    for (uint i = oldCount; i > 1; i--)
+                    for (uint i = oldCount - 1; i >= outCount; i--)
                     {
                         RemoveOutput($"Out{i}", ConnectionType.Event);
                     }
                 }
             }
         }
+        public override void BuildFooter()
+        {
+            ClearFooter();
 
+            if ((bool)TryGetProperty("AutoIncrement"))
+            {
+                Footer = "Auto increments";
+            }
+        }
         public EventSwitchNode()
         {
             Inputs = new ObservableCollection<IPort>
