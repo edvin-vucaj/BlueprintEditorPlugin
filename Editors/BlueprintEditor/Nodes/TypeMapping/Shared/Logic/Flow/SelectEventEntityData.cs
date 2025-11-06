@@ -19,15 +19,17 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
             base.OnCreation();
 
             AddInput("In", ConnectionType.Event, Realm);
-            AddOutput("Selected", ConnectionType.Property, Realm);
-
+            
+            int evntCount = 0;
             foreach (CString evnt in (dynamic)TryGetProperty("Events"))
             {
+                if (evnt == "")
+                    AddOutput($"Out{evntCount++}", ConnectionType.Event, Realm);
+
                 if (evnt.IsNull())
                     continue;
 
                 AddOutput(evnt.ToString(), ConnectionType.Event, Realm);
-                AddInput($"Select{evnt.ToString()}", ConnectionType.Event);
             }
         }
 
@@ -38,13 +40,23 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
             // An event was edited
             if (args.Item.Parent.Name == "Events")
             {
-                string oldName = (args.OldValue == null || ((CString)args.OldValue).IsNull()) ? "Event" : args.OldValue.ToString();
-                EntityInput input = GetInput($"Select{oldName}", ConnectionType.Event);
-                EntityOutput output = GetOutput(oldName, ConnectionType.Event);
+                string oldName;
+                EntityOutput output;
+                if ((CString)args.OldValue == "")
+                {
+                    oldName = "";
+                    output = GetOutput($"Out{args.ModifiedArgs.Index}", ConnectionType.Event);
+                }
+                else
+                {
+                    oldName = args.OldValue.ToString();
+                    output = GetOutput(oldName, ConnectionType.Event);
+                }
+
                 // Update names to the new value
                 string newName = args.NewValue.ToString();
-                input.Name = newName;
-                output.Name = $"Select{newName}";
+                output.Name = newName;
+
                 RefreshCache();
             }
             // The list itself was edited
@@ -55,36 +67,21 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                     case ItemModifiedTypes.Insert:
                     case ItemModifiedTypes.Add:
                     {
-                        CString eventName = (dynamic)args.NewValue;
-                        if (eventName.IsNull())
-                            break;
-                        AddOutput(args.NewValue.ToString(), ConnectionType.Event, Realm);
-                        AddInput($"Select{args.NewValue.ToString()}", ConnectionType.Event, Realm);
+                        string tmp = $"Out{args.ModifiedArgs.Index}";
+                        AddOutput(tmp, ConnectionType.Event, Realm);
                     } break;
                     case ItemModifiedTypes.Remove:
                     {
-                        CString eventName = (dynamic)args.OldValue;
-                        if (eventName.IsNull())
-                            break;
-                        
-                        EntityOutput output = GetOutput(eventName.ToString(), ConnectionType.Event);
-                        RemoveOutput(output);
+                        List<IPort> outputs = Outputs.ToList();
+                        IPort output = outputs[args.ModifiedArgs.Index];
+                        RemoveOutput((EntityOutput)output);
 
-                        EntityInput input = GetInput($"Select{eventName.ToString()}", ConnectionType.Event);
-                        RemoveInput(input);
                     } break;
                     case ItemModifiedTypes.Clear:
                     {
-                        List<IPort> inputs = Inputs.ToList();
                         List<IPort> outputs = Outputs.ToList();
-
-                        for (var i = 1; i < inputs.Count; i++)
-                        {
-                            IPort input = inputs[i];
-                            RemoveInput((EntityInput)input);
-                        }
                         
-                        for (var i = 1; i < outputs.Count; i++)
+                        for (var i = 0; i < outputs.Count; i++)
                         {
                             IPort output = outputs[i];
                             RemoveOutput((EntityOutput)output);
@@ -101,7 +98,6 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                                 continue;
                 
                             AddOutput(evnt.ToString(), ConnectionType.Event, Realm);
-                            AddInput($"Select{evnt.ToString()}", ConnectionType.Event, Realm);
                         }
                         
                         RefreshCache();
