@@ -1129,7 +1129,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor
 
         private void Editor_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Right && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            if (e.ChangedButton == MouseButton.Left && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 if (ToolboxTabControl.SelectedIndex == 0)
                 {
@@ -1383,5 +1383,15 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor
         }
 
         #endregion
+
+        private void Wire_OnSelect(object sender, RoutedEventArgs e)
+        {
+            if (((MenuItem)sender).DataContext is IConnection connection)
+            {
+                BaseConnection wire = (BaseConnection)connection;
+                wire.IsSelected = true;
+                wire.NotifyPropertyChanged("IsSelected");
+            }
+        }
     }
 }
