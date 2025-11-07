@@ -10,15 +10,22 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
 	{
 		public override string ObjectType => "SetProfileOptionEntityData";
 
-		public override void OnCreation()
+		public override string ToolTip => "Sets and saves information passed to it in the given ProfileOption asset files";
+
+        public override void OnCreation()
 		{
 			base.OnCreation();
 
+			AddInput("BoolValue", ConnectionType.Property, Realm);
 			AddInput("IntValue", ConnectionType.Property, Realm);
 			AddInput("FloatValue", ConnectionType.Property, Realm);
-			AddInput("BoolValue", ConnectionType.Property, Realm);
+			AddInput("StringValue", ConnectionType.Property, Realm);
+			AddInput("OptionData", ConnectionType.Property, Realm);
+			
 			AddInput("Apply", ConnectionType.Event, Realm);
 			AddInput("Save", ConnectionType.Event, Realm);
+			AddInput("ResetToDefault", ConnectionType.Event, Realm);
+			AddInput("0x68a11699", ConnectionType.Event, Realm);
 		}
 		
 		public override void BuildFooter()
