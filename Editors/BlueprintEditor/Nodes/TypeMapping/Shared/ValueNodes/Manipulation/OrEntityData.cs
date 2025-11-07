@@ -6,7 +6,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
     public class OrNode : EntityNode
     {
         public override string ObjectType => "OrEntityData";
-        public override string ToolTip => "This node outputs true whenever any inputs are true";
+        public override string ToolTip => "This node outputs True when any of the inputs are true";
 
         public override void OnCreation()
         {
@@ -50,7 +50,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                 }
                 else
                 {
-                    for (uint i = oldCount; i > 1; i--)
+                    for (uint i = oldCount; i > inCount; i--)
                     {
                         RemoveInput($"In{i}", ConnectionType.Property);
                     }
