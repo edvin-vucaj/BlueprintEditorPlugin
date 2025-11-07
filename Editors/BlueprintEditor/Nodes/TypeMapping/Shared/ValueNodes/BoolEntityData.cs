@@ -7,12 +7,15 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
     {
         public override string ObjectType => "BoolEntityData";
 
+        public override string ToolTip => "This nodes outputs a Boolean value";
+
         public override void OnCreation()
         {
             base.OnCreation();
 
             AddInput("SetTrue", ConnectionType.Event, Realm);
             AddInput("SetFalse", ConnectionType.Event, Realm);
+            AddInput("Toggle", ConnectionType.Event, Realm);
 
             AddOutput("Value", ConnectionType.Property, Realm);
         }
