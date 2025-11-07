@@ -1,5 +1,6 @@
 ﻿using BlueprintEditorPlugin.Editors.BlueprintEditor.Connections;
 using Frosty.Core.Controls;
+using FrostySdk.Ebx;
 
 namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared.Logic.Timing
 {
@@ -19,15 +20,45 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
         
         public override void BuildFooter()
         {
-            AddFooter($"Delay: {TryGetProperty("Delay")}");
+            ClearFooter();
+
             if ((bool)TryGetProperty("AutoStart"))
             {
-                AddFooter("Auto starts");
+                if (Footer == null)
+                    Footer = "Auto starts";
+                else
+                    Footer += "\nAuto starts";
             }
             
             if ((bool)TryGetProperty("RunOnce"))
             {
-                AddFooter("Runs once");
+                if (Footer == null)
+                    Footer = "Runs once";
+                else
+                    Footer += "\nRuns once";
+            }
+
+            if ((bool)TryGetProperty("RemoveDuplicateEvents"))
+            {
+                if (Footer == null)
+                    Footer = "Remove duplicate events";
+                else
+                    Footer += "\nRemove duplicate events";
+            }
+
+            if (Footer != null)
+            {
+                AddFooter($"\nDelay: {TryGetProperty("Delay")}");
+            }
+            else
+            {
+                AddFooter($"Delay: {TryGetProperty("Delay")}");
+            }
+
+            if (TryGetProperty("TimeDeltaType") != null)
+            {
+                string timeDelta = (CString)TryGetProperty("TimeDeltaType").ToString().Substring(14);
+                AddFooter($"TimeDeltaType: {timeDelta}");
             }
         }
     }
