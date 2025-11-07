@@ -485,7 +485,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Grid.Style>
-                                        
+                                        <!-- Hide unused ports toggle button top right of node -->
                                         <ToggleButton Grid.Column="1" Width="13"
                                                       Height="13"
                                                       HorizontalAlignment="Right"

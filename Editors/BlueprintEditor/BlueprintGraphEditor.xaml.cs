@@ -764,6 +764,15 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor
                     newNode.Location = new Point(selectedNode.Location.X + 15, selectedNode.Location.Y + 15);
                     NodeWrangler.AddVertex(newNode);
                     NodeWrangler.SelectedVertices.Add(newNode);
+
+                    foreach (EntityInput input in entityNode.Inputs)
+                    {
+                        newNode.AddInput(input.Name, input.Type, input.Realm);
+                    }
+                    foreach (EntityOutput output in entityNode.Outputs)
+                    {
+                        newNode.AddOutput(output.Name, output.Type, output.Realm);
+                    }
                 }
 
                 if (selectedNode is InterfaceNode)
@@ -1031,6 +1040,15 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor
                             newNode.Location = new Point(selectedNode.Location.X + 15, selectedNode.Location.Y + 15);
                             NodeWrangler.AddVertex(newNode);
                             NodeWrangler.SelectedVertices.Add(newNode);
+
+                            foreach (EntityInput input in entityNode.Inputs)
+                            {
+                                newNode.AddInput(input.Name, input.Type, input.Realm);
+                            }
+                            foreach (EntityOutput output in entityNode.Outputs)
+                            {
+                                newNode.AddOutput(output.Name, output.Type, output.Realm);
+                            }
                         }
 
                         if (selectedNode is InterfaceNode)
