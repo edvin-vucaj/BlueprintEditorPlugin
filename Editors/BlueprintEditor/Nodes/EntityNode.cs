@@ -99,7 +99,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes
             }
         }
 
-        private bool _isFlatted;
+        private bool _isFlatted = true;
         public bool IsFlatted
         {
             get => _isFlatted;
