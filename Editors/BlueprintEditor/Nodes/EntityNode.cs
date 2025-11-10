@@ -1141,7 +1141,7 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes
                         int hash = int.Parse(output.Name.Remove(0, 2), NumberStyles.AllowHexSpecifier);
                         if (_hashCacheEOutputs.ContainsKey(hash))
                             return;
-                
+
                         Outputs.Add(output);
                         _hashCacheEOutputs.Add(hash, (EventOutput)output);
                         return;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using BlueprintEditorPlugin.Editors.BlueprintEditor.Connections;
 using BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.Ports;
 using BlueprintEditorPlugin.Models.Nodes.Ports;
@@ -40,12 +41,13 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
             // An event was edited
             if (args.Item.Parent.Name == "Events")
             {
+                int modifiedIndex = args.ModifiedArgs.Index;
+
                 string oldName;
                 EntityOutput output;
                 if ((CString)args.OldValue == "")
                 {
-                    oldName = "";
-                    output = GetOutput($"Out{args.ModifiedArgs.Index}", ConnectionType.Event);
+                    output = GetOutput($"Out{modifiedIndex}", ConnectionType.Event);
                 }
                 else
                 {
@@ -54,7 +56,12 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                 }
 
                 // Update names to the new value
-                string newName = args.NewValue.ToString();
+                string newName;
+                if (args.NewValue.ToString() != "")
+                    newName = args.NewValue.ToString();
+                else
+                    newName = $"Out{modifiedIndex}";
+
                 output.Name = newName;
 
                 RefreshCache();
@@ -62,20 +69,31 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
             // The list itself was edited
             else if (args.Item.Name == "Events")
             {
+                int modifiedIndex = args.ModifiedArgs.Index;
                 switch (args.ModifiedArgs.Type)
                 {
                     case ItemModifiedTypes.Insert:
                     case ItemModifiedTypes.Add:
                     {
-                        string tmp = $"Out{args.ModifiedArgs.Index}";
+                        string tmp = $"Out{modifiedIndex}";
                         AddOutput(tmp, ConnectionType.Event, Realm);
+
+                        FrostyPropertyGridItemData argument = args.Item.FindChild($"[{modifiedIndex}]");
+                        argument.Value = (CString)tmp;
                     } break;
                     case ItemModifiedTypes.Remove:
                     {
                         List<IPort> outputs = Outputs.ToList();
-                        IPort output = outputs[args.ModifiedArgs.Index];
-                        RemoveOutput((EntityOutput)output);
-
+                        IPort output = null;
+                        try
+                        {
+                            output = outputs[modifiedIndex];
+                        }
+                        catch (System.ArgumentOutOfRangeException e)
+                        {
+                        }
+                        if (output != null)
+                            RemoveOutput((EntityOutput)output);
                     } break;
                     case ItemModifiedTypes.Clear:
                     {
@@ -86,21 +104,6 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
                             IPort output = outputs[i];
                             RemoveOutput((EntityOutput)output);
                         }
-                    } break;
-                    case ItemModifiedTypes.Assign:
-                    {
-                        Inputs.Clear();
-                        Outputs.Clear();
-                        
-                        foreach (CString evnt in (dynamic)TryGetProperty("Events"))
-                        {
-                            if (evnt.IsNull())
-                                continue;
-                
-                            AddOutput(evnt.ToString(), ConnectionType.Event, Realm);
-                        }
-                        
-                        RefreshCache();
                     } break;
                 }
             }
