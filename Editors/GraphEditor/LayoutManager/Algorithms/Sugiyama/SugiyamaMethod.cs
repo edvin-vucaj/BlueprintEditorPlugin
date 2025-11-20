@@ -203,6 +203,10 @@ namespace BlueprintEditorPlugin.Editors.GraphEditor.LayoutManager.Algorithms.Sug
             AssignVerticalPositions();
         }
 
+        public SugiyamaMethod()
+        {
+        }
+
         public SugiyamaMethod(List<IConnection> connections, List<IVertex> vertices)
         {
             _connections = connections;

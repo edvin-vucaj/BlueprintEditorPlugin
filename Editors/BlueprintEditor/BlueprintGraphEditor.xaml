@@ -1486,6 +1486,18 @@
                                 Source="pack://application:,,,/BlueprintEditorPlugin;component/Images/AutoSortButton.png"
                                 Width="20" />
                         </Button>
+                        
+                        <Button x:Name="OrganizeGraphButton"
+                                Width="32"
+                                Height="26"
+                                Margin="2,0,2,0"
+                                HorizontalAlignment="Left"
+                                ToolTip="Organize the Blueprint graph's nodes using the parent-child way"
+                                Click="OrganizeGraphButton_OnClick">
+                            <Image
+                                Source="C:\Users\Edi\source\repos\FrostyToolsuite\Plugins\BlueprintEditorPlugin\Images\organize_blueprint_graph.png"
+                                Width="32" />
+                        </Button>
 
                         <Button x:Name="SaveOrganizationButton"
                                 Width="20"
