@@ -1,8 +1,10 @@
 using BlueprintEditorPlugin.Editors.BlueprintEditor.Connections;
 using FrostyEditor;
+using FrostySdk;
 using FrostySdk.Ebx;
 using FrostySdk.IO;
 using FrostySdk.Managers;
+using System;
 
 namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared.ValueNodes.ProfileOption
 {
@@ -30,12 +32,27 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
 		
 		public override void BuildFooter()
 		{
-			PointerRef pointerRef = (PointerRef)TryGetProperty("OptionData");
-			if (pointerRef != PointerRefType.External)
-				return;
+            ClearFooter();
 
-			EbxAssetEntry assetEntry = App.AssetManager.GetEbxEntry(pointerRef.External.FileGuid);
-			Footer = $"Option: {assetEntry.Filename}";
-		}
+            // ConnectedOptionDataType property
+            UInt32 connectedOptionDataType = (UInt32)TryGetProperty("ConnectedOptionDataType");
+
+            if (connectedOptionDataType != 0)
+            {
+                Footer = $"ConnectedOptionDataType: {Utils.GetString((int)connectedOptionDataType)}";
+            }
+
+            // OptionData property
+            PointerRef pointerRef = (PointerRef)TryGetProperty("OptionData");
+
+            if (pointerRef.Type != PointerRefType.External)
+                return;
+
+            EbxAssetEntry assetEntry = App.AssetManager.GetEbxEntry(pointerRef.External.FileGuid);
+            if (Footer == null)
+                Footer = $"Option: {assetEntry.Filename}";
+            else
+                Footer += $"\nOption: {assetEntry.Filename}";
+        }
 	}
 }

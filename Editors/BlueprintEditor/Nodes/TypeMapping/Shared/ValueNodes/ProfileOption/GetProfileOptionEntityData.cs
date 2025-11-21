@@ -1,8 +1,10 @@
 using BlueprintEditorPlugin.Editors.BlueprintEditor.Connections;
 using FrostyEditor;
+using FrostySdk;
 using FrostySdk.Ebx;
 using FrostySdk.IO;
 using FrostySdk.Managers;
+using System;
 
 namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared.ValueNodes.ProfileOption
 {
@@ -38,12 +40,40 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
 
         public override void BuildFooter()
 		{
-			PointerRef pointerRef = (PointerRef)TryGetProperty("OptionData");
-			if (pointerRef != PointerRefType.External)
+            ClearFooter();
+
+			// ConnectedOptionDataType property
+			UInt32 connectedOptionDataType = (UInt32)TryGetProperty("ConnectedOptionDataType");
+
+            if (connectedOptionDataType != 0)
+			{
+				Footer = $"ConnectedOptionDataType: {Utils.GetString((int)connectedOptionDataType)}";
+			}
+
+			// OptionData property
+            PointerRef pointerRef = (PointerRef)TryGetProperty("OptionData");
+
+			if (pointerRef.Type != PointerRefType.External)
 				return;
 
 			EbxAssetEntry assetEntry = App.AssetManager.GetEbxEntry(pointerRef.External.FileGuid);
-			Footer = $"Option: {assetEntry.Filename}";
+			if (Footer == null)
+				Footer = $"Option: {assetEntry.Filename}";
+			else
+				Footer += $"\nOption: {assetEntry.Filename}";
+
+			// UpdateContinuously property
+			bool updateContinuously;
+
+            if (TryGetProperty("UpdateContinuously") != null)
+			{
+                updateContinuously = (bool)TryGetProperty("UpdateContinuously");
+
+				if (updateContinuously && Footer == null)
+					Footer = "Update continuously: True";
+				else if (updateContinuously && Footer != null)
+                    Footer += "\nUpdate continuously: True";
+            }
 		}
 	}
 }
