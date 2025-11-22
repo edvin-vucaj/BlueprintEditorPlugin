@@ -12,9 +12,9 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
         {
             base.OnCreation();
 
-            AddOutput("0x9f56abcd", ConnectionType.Event, Realm);
-            AddOutput("0xe9588f4f", ConnectionType.Event, Realm);
-            AddOutput("0x624f5545", ConnectionType.Event, Realm);
+            AddOutput("0x9f56abcd", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
+            AddOutput("0xe9588f4f", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
+            AddOutput("0x624f5545", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
         }
     }
 }
