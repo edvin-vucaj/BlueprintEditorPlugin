@@ -12,8 +12,8 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
         {
             base.OnCreation();
 
-            AddInput("0x4ac5c127", ConnectionType.Event, Realm);
-            AddInput("Return", ConnectionType.Event, Realm);
+            AddInput("0x4ac5c127", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
+            AddInput("Return", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
         }
     }
 }

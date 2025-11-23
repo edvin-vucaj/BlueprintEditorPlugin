@@ -12,10 +12,10 @@ namespace BlueprintEditorPlugin.Editors.BlueprintEditor.Nodes.TypeMapping.Shared
         {
             base.OnCreation();
 
-            AddInput("Activate", ConnectionType.Event, Realm);
-            AddInput("0x321be0dd", ConnectionType.Event, Realm);
-            AddInput("0x192e67c8", ConnectionType.Event, Realm);
-            AddInput("0x61f26ebc", ConnectionType.Event, Realm);
+            AddInput("Activate", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
+            AddInput("0x321be0dd", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
+            AddInput("0x192e67c8", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
+            AddInput("0x61f26ebc", ConnectionType.Event, Models.Entities.Networking.Realm.Client);
         }
     }
 }
